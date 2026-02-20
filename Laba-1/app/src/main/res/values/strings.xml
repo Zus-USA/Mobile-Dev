@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">Clash Royale 2</string>
+    <string name="min">МИНИСТЕРСТВО НАУКИ И ВЫСШЕГО ОБРАЗОВАНИЯ РОССИЙСКОЙ ФЕДЕРАЦИИ ФЕДЕРАЛЬНОЕ ГОСУДАРСТВЕННОЕ БЮДЖЕТНОЕ ОБРАЗОВАТЕЛЬНОЕ УЧРЕЖДЕНИЕ ВЫСШЕГО ОБРАЗОВАНИЯ</string>
+    <string name="university">«САХАЛИНСКИЙ ГОСУДАРСТВЕННЫЙ УНИВЕРСИТЕТ»</string>
+
+    <string name="institute">Институт естественных наук и техносферной безопасности</string>
+    <string name="depart">Кафедра информатики</string>
+    <string name="name1">Ощепков Алексей</string>
+
+    <string name="lab_title">Лабораторная работа №2</string>
+    <string name="lab_topic">«Android и модель MVC»</string>
+    <string name="specialty">01.03.02 Прикладная математика и информатика</string>
+
+    <string name="title">Научный руководитель</string>
+    <string name="name2">Соболев Евгений Игоревич</string>
+
+    <string name="city">г. Южно-Сахалинск</string>
+    <string name="year">2026 г.</string>
+</resources>
