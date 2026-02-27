@@ -380,10 +380,10 @@ class CurrencyConverterTest {
 ## 3. Скриншоты успешного выполнения тестов
 
 ### Результат юнит-теста `StringUtilsTest`:
-![](images/lab2-1.png)
+![](images/lab2-1.PNG)
 
 ### Результат юнит-теста `CurrencyConverterTest`:
-![](images/lab2-2.png)
+![](images/lab2-2.PNG)
 
 ---
 
