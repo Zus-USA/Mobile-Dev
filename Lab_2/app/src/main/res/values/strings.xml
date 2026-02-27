@@ -1,5 +1,17 @@
 <resources>
     <string name="app_name">My Application</string>
-    <string name="greeting">Привет, Android!</string>
-    <string name="sub_text">Лаба 1</string>
+
+    <string name="lab2_title">Лабораторная работа №2</string>
+    <string name="book_title">Книга: %s</string>
+    <string name="book_author">Автор: %s</string>
+    <string name="book_price">Цена со скидкой: %.2f%s</string>
+
+    <string name="converter_title">Конвертер валют:</string>
+    <string name="currency_rub_line">Исходная сумма: %d%s</string>
+    <string name="currency_usd_line">USD: %.2f%s</string>
+    <string name="currency_eur_line">EUR: %.2f%s</string>
+
+    <string name="suffix_rub"> руб.</string>
+    <string name="suffix_usd"> $</string>
+    <string name="suffix_eur"> €</string>
 </resources>

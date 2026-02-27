@@ -1,4 +1,4 @@
-package utils
+package com.example.myapplication.utils
 
 data class Book(
     val title: String,
