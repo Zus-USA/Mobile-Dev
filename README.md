@@ -15,8 +15,8 @@
 <br>
 <br>
 
-Лабораторная работа №3  
-«Реализация списка объектов с фильтрацией.»  
+Лабораторная работа №5  
+«Счетчик нажатий, поле ввода и отображение текста. Реализация ToDo-списка.»  
 01.03.02 Прикладная математика и информатика  
 
 <br>
@@ -49,123 +49,310 @@
 
 ---
 
-# Л/р №3
+# Л/р №5
 
-## Реализация списка объектов с фильтрацией с использованием .map, .filter, .sortedBy
+## Счетчик нажатий, поле ввода и отображение текста. Реализация ToDo-списка.
 
-**Цель работы:** Изучить функциональные методы обработки коллекций в Kotlin (`filter`, `map`, `sortedBy`) на примере списка объектов и вывести результаты в интерфейс Android-приложения.
+**Цель работы:** Научиться обрабатывать пользовательский ввод, работать с состоянием (счетчик, список задач), динамически обновлять интерфейс приложения на Kotlin.
 
 ---
 
-## 1. Листинг классов `Product`, `Employee` и `MainActivity`.
+## 1. Листинг `activity_main.xml` и `MainActivity.kt`.
 
-Класс `Product`.
+Листинг `activity_main.xml`.
 
 ```kotlin
-package models
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
 
-data class Product(
-    val name: String,
-    val category: String,
-    val price: Double,
-    val inStock: Boolean
-)
+    <!-- счётчик -->
+    <TextView
+        android:id="@+id/textCounter"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/counter_text"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:layout_marginBottom="16dp"/>
+
+    <!-- Контейнер для кнопок счётчика -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="24dp"
+        style="?android:attr/buttonBarStyle">
+
+        <Button
+            android:id="@+id/buttonIncrement"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/button_increment"
+            android:layout_marginEnd="8dp"
+            android:backgroundTint="@color/purple"
+            android:textColor="@color/white"
+            android:textStyle="bold"/>
+
+        <Button
+            android:id="@+id/buttonReset"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/button_reset"
+            android:backgroundTint="@color/purple"
+            android:textColor="@color/white"
+            android:textStyle="bold"/>
+    </LinearLayout>
+
+    <!-- поле ввода для отображения текста -->
+    <EditText
+        android:id="@+id/editTextInput"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/hint_input_text"
+        android:inputType="text"
+        android:layout_marginBottom="8dp"
+        android:minHeight="48dp"/>
+
+    <Button
+        android:id="@+id/buttonShow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/button_show"
+        android:layout_marginBottom="8dp"
+        android:backgroundTint="@color/purple"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        android:minWidth="48dp"
+        android:minHeight="48dp"/>
+
+    <TextView
+        android:id="@+id/textEntered"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/label_entered"
+        android:textSize="18sp"
+        android:layout_marginBottom="24dp"/>
+
+    <!-- Список -->
+    <EditText
+        android:id="@+id/editTextTask"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/hint_input_task"
+        android:inputType="text"
+        android:layout_marginBottom="8dp"
+        android:minHeight="48dp"/>
+
+    <!-- Контейнер для кнопок списка -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="8dp"
+        style="?android:attr/buttonBarStyle">
+
+        <Button
+            android:id="@+id/buttonAddTask"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/button_add_task"
+            android:layout_marginEnd="8dp"
+            android:backgroundTint="@color/purple"
+            android:textColor="@color/white"
+            android:textStyle="bold"/>
+
+        <Button
+            android:id="@+id/buttonRemoveLast"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/button_remove_last"
+            android:backgroundTint="@color/purple"
+            android:textColor="@color/white"
+            android:textStyle="bold"/>
+    </LinearLayout>
+
+    <!-- Инд №2 Счетчик задач -->
+    <TextView
+        android:id="@+id/textTaskCount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/task_count_label"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="8dp"/>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true">
+
+        <!-- Список задач -->
+        <TextView
+            android:id="@+id/textTasks"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/label_tasks"
+            android:textSize="18sp"
+            android:background="@drawable/border_purple"
+            android:textColor="@color/white"
+            android:padding="8dp"
+            android:gravity="top|start"/>
+    </ScrollView>
+</LinearLayout>
 ```
 
-Класс `Employee` (индивидуальное задание).
+Листинг `MainActivity.kt`
 
 ```kotlin
-package models
+package com.example.todoapp
 
-data class Employee(
-    val name: String,
-    val department: String,
-    val salary: Double,
-    val experience: Int
-)
-```
-
-Класс `MainActivity`.
-
-```kotlin
-package com.example.myapplication
-
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Button
+import android.widget.EditText
 import android.widget.TextView
-import models.Product
-import models.Employee
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 
 class MainActivity : AppCompatActivity() {
+
+    private var counter = 0
+    private val tasks = mutableListOf<String>()
+
+    //Инд №2 Счетчик количества задач
+    private var taskCount = 0
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val products = getProducts()
+        //Инициализация
 
-        // Исходный список
-        val originalText = products.joinToString("\n") {
-            "${it.name} – ${it.price} руб. (${if (it.inStock) "в наличии" else "нет"})"
+        //Счётчик
+        val textCounter = findViewById<TextView>(R.id.textCounter)
+        val buttonIncrement = findViewById<Button>(R.id.buttonIncrement)
+        val buttonReset = findViewById<Button>(R.id.buttonReset)
+
+        //Ввод текста
+        val editTextInput = findViewById<EditText>(R.id.editTextInput)
+        val buttonShow = findViewById<Button>(R.id.buttonShow)
+        val textEntered = findViewById<TextView>(R.id.textEntered)
+
+        //ToDо список
+        val editTextTask = findViewById<EditText>(R.id.editTextTask)
+        val buttonAddTask = findViewById<Button>(R.id.buttonAddTask)
+        val buttonRemoveLast = findViewById<Button>(R.id.buttonRemoveLast)
+        val textTasks = findViewById<TextView>(R.id.textTasks)
+
+        //Инд №2 Счетчик задач
+        val textTaskCount = findViewById<TextView>(R.id.textTaskCount)
+
+
+        //Счётчик нажатий
+        updateCounterDisplay(textCounter)
+
+        buttonIncrement.setOnClickListener {
+            counter++
+            updateCounterDisplay(textCounter)
         }
-        findViewById<TextView>(R.id.textOriginal).text = originalText
 
-        // Только в наличии
-        val inStockProducts = products.filter { it.inStock }
-        val inStockText = inStockProducts.joinToString("\n") { "${it.name} – ${it.price} руб." }
-        findViewById<TextView>(R.id.textInStock).text = inStockText
-
-        // Электроника в наличии, отсортированная по цене
-        val electronicsSorted = products
-            .filter { it.category == "Электроника" && it.inStock }
-            .sortedBy { it.price }
-            .map { "${it.name} – ${it.price} руб." }
-        findViewById<TextView>(R.id.textSorted).text = electronicsSorted.joinToString("\n")
-
-
-        // Список сотрудников -----------
-        val employees = getEmployees()
-
-        // Все сотрудники
-        val originalEmployeesText = employees.joinToString("\n") { employee ->
-            "${employee.name}, ${employee.department}, ${employee.salary} руб., стаж: ${employee.experience} лет"
+        // Сброс счётчика
+        buttonReset.setOnClickListener {
+            counter = 0
+            updateCounterDisplay(textCounter)
+            Toast.makeText(this, R.string.toast_counter_reset, Toast.LENGTH_SHORT).show()
         }
-        findViewById<TextView>(R.id.textOriginalEmployees).text = originalEmployeesText
 
-        // Сотрудники с зарплатой > 100000
-        val highSalaryEmployees = employees.filter { it.salary > 100000.0 }
-
-        val highSalaryText = if (highSalaryEmployees.isEmpty()) {"Нет сотрудников с зарплатой > 100 000 руб."}
-        else {
-            highSalaryEmployees.joinToString("\n") { emp -> "${emp.name} — ${emp.salary} руб."}
+        // Отображение введенного текста
+        buttonShow.setOnClickListener {
+            val inputText = editTextInput.text.toString()
+            textEntered.text = getString(R.string.label_entered_with_text, inputText)
         }
-        findViewById<TextView>(R.id.textHighSalary).text = highSalaryText
 
-        // Сотрудники по стажу
-        val sortedByExperience = employees
-            .sortedByDescending { it.experience }
-            .map { "${it.name} — стаж: ${it.experience} лет" }
+        // ToDо список
+        buttonAddTask.setOnClickListener {
+            val task = editTextTask.text.toString()
+            if (task.isNotBlank()) {
+                tasks.add(task)
+                // Инд №2 Увеличить счетчик задач
+                taskCount++
+                updateTaskCountDisplay(textTaskCount)
+                updateTasksDisplay(textTasks)
+                editTextTask.text.clear()
+            } else {
+                Toast.makeText(this, R.string.toast_empty_task, Toast.LENGTH_SHORT).show()
+            }
+        }
 
-        findViewById<TextView>(R.id.textSortedEmployees).text = sortedByExperience.joinToString("\n")
+        // Удаление последней задачи
+        buttonRemoveLast.setOnClickListener {
+            if (tasks.isNotEmpty()) {
+                tasks.removeAt(tasks.lastIndex)
+                // Инд №2 Уменьшить счетчик задач
+                taskCount--
+                updateTaskCountDisplay(textTaskCount)
+                updateTasksDisplay(textTasks)
+                Toast.makeText(this, R.string.toast_task_removed, Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(this, R.string.toast_list_empty, Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        updateTaskCountDisplay(textTaskCount)
     }
-    private fun getProducts(): List<Product> {
-        return listOf(
-            Product("Ноутбук", "Электроника", 75000.0, true),
-            Product("Мышь", "Электроника", 1500.0, true),
-            Product("Книга 'Котлин'", "Книги", 1200.0, false),
-            Product("Флешка 64GB", "Электроника", 2000.0, true),
-            Product("Блокнот", "Канцелярия", 300.0, true),
-            Product("Ручка", "Канцелярия", 50.0, false),
-            Product("Монитор", "Электроника", 25000.0, true)
-        )
+
+    private fun updateCounterDisplay(textView: TextView) {
+        textView.text = getString(R.string.counter_text, counter)
     }
 
-    private fun getEmployees(): List<Employee> {
-        return listOf(
-            Employee("Иванов Иван Иванович", "Отдел разработки", 150000.0, 7),
-            Employee("Петров Пётр Петрович", "Отдел маркетинга", 95000.0, 6),
-            Employee("Антонов Антон Антонович", "Отдел разработки", 180000.0, 10),
-            Employee("Павлов Павел Павлович", "Бухгалтерия", 110000.0, 12),
-        )
+    private fun updateTasksDisplay(textView: TextView) {
+        if (tasks.isEmpty()) {
+            textView.text = getString(R.string.label_tasks)
+        } else {
+            textView.text = tasks.joinToString("\n") { "• $it" }
+        }
+    }
+
+    //Инд №2 обновление счетчика задач
+    private fun updateTaskCountDisplay(textView: TextView) {
+        textView.text = getString(R.string.task_count_label, taskCount)
+    }
+
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putInt("counter", counter)
+        outState.putStringArrayList("tasks", ArrayList(tasks))
+        outState.putInt("taskCount", taskCount)
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        counter = savedInstanceState.getInt("counter")
+        tasks.clear()
+        tasks.addAll(savedInstanceState.getStringArrayList("tasks") ?: emptyList())
+        taskCount = savedInstanceState.getInt("taskCount")
+        val textCounter = findViewById<TextView>(R.id.textCounter)
+        val textTasks = findViewById<TextView>(R.id.textTasks)
+        val textTaskCount = findViewById<TextView>(R.id.textTaskCount)
+        updateCounterDisplay(textCounter)
+        updateTasksDisplay(textTasks)
+        updateTaskCountDisplay(textTaskCount)
     }
 }
 ```
@@ -174,51 +361,40 @@ class MainActivity : AppCompatActivity() {
 
 ## 2. Скриншот работающего приложения.
 
-![](images/lab3-1.PNG)
+![](images/lab5-1.PNG)
 
 ---
 
 ## 3. Ответы на контрольные вопросы.
 
-**1. Что возвращает функция `filter` – новый список или изменяет существующий?**
+**1. Как получить текст из `EditText`?**
 
-***Ответ:*** Функция `filter` возвращает список, содержащий только элементы, удовлетворяющие условию.
+***Ответ:*** Для получения текста из поля ввода `EditText` в Kotlin используется следующая конструкция: `val inputText = editText.text.toString()`.
 
-**2. В чём разница между `sortedBy` и `sortedByDescending`?**
+**2. Почему при повороте экрана данные (счётчик, список задач) сбрасываются? Как это можно исправить?**
 
-***Ответ:*** `sortedBy` — сортировка по возрастанию, `sortedByDescending` — по убыванию.
+***Ответ:*** При повороте активность пересоздаётся. Для сохранения нужно использовать `onSaveInstanceState` (сохранение) и `onRestoreInstanceState` (восстановление).
 
-**3. Как можно объединить несколько условий в `filter`?**
+**3. Для чего используется `joinToString`? Как изменить разделитель?**
 
-***Ответ:*** Использовать логические операторы: **&& (и)**, **|| (или)**, **! (не)**.
+***Ответ:*** Функция `joinToString()` преобразует список элементов в одну строку, соединяя их разделителем. Чтобы изменить разделитель, нужно передать нужный символ или строку первым аргументом: `tasks.joinToString("разделитель")`.
 
-**4. Для чего используется функция `map`? Приведите пример.**
+**4. В чём разница между `List` и `MutableList`?**
 
-***Ответ:*** Функция `map` предназначена для преобразования каждого элемента коллекции по заданному правилу. 
+***Ответ:*** `List` это неизменяемая коллекция, которая позволяет только читать данные. `MutableList` может изменять содержимое списка после его создания.
 
-```kotlin
-// Пример: Числа в их квадраты
-val numbers = listOf(1, 2, 3, 4, 5)
-val squares = numbers.map { it * it }  
-// Результат: 1, 4, 9, 16, 25
-```
+**5. Как очистить поле ввода после добавления задачи?**
 
-**5. Что такое `joinToString` и как она работает?**
-
-***Ответ:*** Функция `joinToString` преобразует коллекцию элементов в одну строку, объединяя их с указанным разделителем.
+***Ответ:*** Чтобы очистить поле ввода `EditText` после добавления задачи, нужно использовать метод `.clear()` для свойства `.text`: `editTextTask.text.clear()`.
 
 ---
 
 ## 4. Вывод по работе.
 
-В ходе выполнения лабораторной работы №3 были изучены функциональные методы Kotlin:
+В ходе выполнения лабораторной работы №5 я научился: 
 
-`filter` — фильтрация элементов по условию
+1. Работать с компонентами UI (`EditText`, `TextView`, `Button`).
+2. Обрабатывать события через `setOnClickListener`.
+3. Динамически обновлять интерфейс при изменении данных.
 
-`map` — преобразование элементов
-
-`sortedBy` и `sortedByDescending` — сортировка
-
-`joinToString` — объединение в строку
-
-Выполнено индивидуальное задание (Вариант 2: Сотрудники).
+Выполнил индивидуальное задание 2.

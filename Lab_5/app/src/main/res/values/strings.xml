@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">TodoApp</string>
+    <string name="counter_text">Счётчик: %d</string>
+    <string name="button_increment">+1</string>
+    <string name="button_reset">Сбросить</string>
+    <string name="hint_input">Введите текст</string>
+    <string name="button_show">Показать</string>
+    <string name="label_entered">Вы ввели:</string>
+    <string name="label_entered_with_text">Вы ввели: %s</string>
+    <string name="button_add_task">Добавить задачу</string>
+    <string name="button_remove_last">Удалить посл.</string>
+    <string name="label_tasks">Список задач:</string>
+    <string name="task_count_label">Всего задач: %d</string>
+    <string name="toast_empty_task">Введите задачу</string>
+    <string name="toast_counter_reset">Счётчик сброшен</string>
+    <string name="toast_task_removed">Задача удалена</string>
+    <string name="toast_list_empty">Список пуст</string>
+    <string name="hint_input_text">Введите текст</string>
+    <string name="hint_input_task">Введите задачу</string>
+</resources>
